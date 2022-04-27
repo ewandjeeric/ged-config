@@ -1,0 +1,30 @@
+server:
+  port: 8084
+
+spring:
+  cloud:
+    gateway:
+      routes:
+      - id: company1
+        uri: http://localhost:8081/
+        predicates:
+        - Path=/companies/**
+      - id: company2
+        uri: http://localhost:8082/
+        predicates:
+        - Path=/companies/**
+      - id: exterieur
+        uri: https://countries-cities.p.rapidapi.com
+        predicates:
+         - Path=/api/**
+        filters:
+         - AddRequestHeader=X-RapidAPI-Host, countries-cities.p.rapidapi.com
+         - AddRequestHeader=X-RapidAPI-Key, ae8c3567c1mshd8b3615c17658e3p1f88b9jsn52beb5463b2f
+         - RewritePath=/api(?<segment>/?.*), $\{segment}
+    discovery:
+      enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
